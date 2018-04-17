@@ -4,7 +4,7 @@ __date__ = '2018/4/13 22:49'
 
 from random import Random
 from django.core.mail import send_mail
-from user_login.settings import EMAIL_FROM
+from bank.settings import EMAIL_FROM
 from users.models import EmailVerifyRecord
 
 
