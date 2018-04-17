@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'user_login.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "user_template",
+        'NAME': "bank",
         'USER':"root",
         'PASSWORD':"123456",
         'HOST':"127.0.0.1"
