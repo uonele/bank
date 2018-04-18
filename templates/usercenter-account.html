@@ -1,0 +1,29 @@
+{% extends 'usercenter-base.html' %}
+{% block title %}账户余额- 个人网上银行{% endblock %}
+{% load staticfiles %}
+{% block custom_bread %}
+    <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>账户余额</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block right_content %}
+    <div class="right" >
+		<div class="personal_des Releasecont">
+			<div class="head">
+				<h1>余&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额：
+        <input class="borderno" type="text" name="email" readonly="readonly" value="{{ balance }}"/></h1>
+			</div>
+
+		</div>
+
+
+	</div>
+{% endblock %}
+
+

@@ -2,7 +2,7 @@
 from django import forms
 from captcha.fields import CaptchaField
 
-from .models import UserProfile
+from .models import UserProfile, TradeInfo
 
 
 class LoginForm(forms.Form):
@@ -24,6 +24,12 @@ class ForgetForm(forms.Form):
 class ModifyPwdForm(forms.Form):
     password1 = forms.CharField(required=True, min_length=5)
     password2 = forms.CharField(required=True, min_length=5)
+
+
+class TradeInfoForm(forms.ModelForm):
+    class Meta:
+        model = TradeInfo
+        fields = ['trade_type', 'from_card', 'to_card', 'trade_amount']
 
 
 class UploadImageForm(forms.ModelForm):

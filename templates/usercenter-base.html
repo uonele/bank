@@ -87,8 +87,10 @@
 	<div class="wp list personal_list">
 	<div class="left">
         <ul>
-            <li class="active2"><a href="{% url 'users:user_info' %}">个人资料</a></li>
-            <li ><a href="#">个人财产</a></li>
+
+            <li ><a href="{% url 'users:user_info' %}">个人信息</a></li>
+
+            <li ><a href="{% url 'users:myaccount' %}">个人财产</a></li>
             <li ><a href="#">交易记录</a></li>
             <li >
                 <a href="{% url 'users:mymessage' %}" style="position: relative;">
@@ -317,66 +319,6 @@
 <script src="{% static 'js/validate.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/deco-user.js' %}"></script>
 
-{#<script type="text/javascript">#}
-{#    $('.jsDeleteFav_course').on('click', function(){#}
-{#        var _this = $(this),#}
-{#            favid = _this.attr('data-favid');#}
-{#        alert(favid)#}
-{#        $.ajax({#}
-{#                cache: false,#}
-{#                type: "POST",#}
-{#                url: "{% url "org:add_fav" %}",#}
-{#                data: {#}
-{#                    fav_type: 1,#}
-{#                    fav_id: favid,#}
-{#                    csrfmiddlewaretoken: '{{ csrf_token }}'#}
-{#                },#}
-{#                async: true,#}
-{#                success: function(data) {#}
-{#                    Dml.fun.winReload();#}
-{#                }#}
-{#            });#}
-{#    });#}
-{##}
-{#    $('.jsDeleteFav_teacher').on('click', function(){#}
-{#            var _this = $(this),#}
-{#                favid = _this.attr('data-favid');#}
-{#            $.ajax({#}
-{#                    cache: false,#}
-{#                    type: "POST",#}
-{#                    url: "{% url "org:add_fav" %}",#}
-{#                    data: {#}
-{#                        fav_type: 3,#}
-{#                        fav_id: favid,#}
-{#                        csrfmiddlewaretoken: '{{ csrf_token }}'#}
-{#                    },#}
-{#                    async: true,#}
-{#                    success: function(data) {#}
-{#                        Dml.fun.winReload();#}
-{#                    }#}
-{#                });#}
-{#        });#}
-{##}
-{##}
-{#    $('.jsDeleteFav_org').on('click', function(){#}
-{#            var _this = $(this),#}
-{#                favid = _this.attr('data-favid');#}
-{#            $.ajax({#}
-{#                    cache: false,#}
-{#                    type: "POST",#}
-{#                    url: "{% url "org:add_fav" %}",#}
-{#                    data: {#}
-{#                        fav_type: 2,#}
-{#                        fav_id: favid,#}
-{#                        csrfmiddlewaretoken: '{{ csrf_token }}'#}
-{#                    },#}
-{#                    async: true,#}
-{#                    success: function(data) {#}
-{#                        Dml.fun.winReload();#}
-{#                    }#}
-{#                });#}
-{#        });#}
-{#</script>#}
 {% block custom_js %}
 {% endblock %}
 <script>

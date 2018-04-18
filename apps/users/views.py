@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 
-from .models import UserProfile, EmailVerifyRecord,UserMessage
+from .models import UserProfile, EmailVerifyRecord,UserMessage,Card
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, UploadImageForm
 from .forms import UserInfoForm
 from utils.email_send import send_register_email
@@ -230,6 +230,18 @@ class UpdateEmailView(LoginRequiredMixin, View):
             return HttpResponse('{"status":"success"}', content_type='application/json')
         else:
             return HttpResponse('{"email":"验证码出错"}', content_type='application/json')
+
+
+class MyaccountView(LoginRequiredMixin, View):
+    """
+    我的账户余额
+    """
+
+    def get(self, request):
+        user_temp = request.user
+        balance = user_temp.user.balance
+        sort = request.GET.get('sort', "")
+        return render(request, 'usercenter-account.html', {'balance' : balance, 'sort':sort})
 
 
 class MymessageView(LoginRequiredMixin, View):
