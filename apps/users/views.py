@@ -239,9 +239,22 @@ class MyaccountView(LoginRequiredMixin, View):
 
     def get(self, request):
         user_temp = request.user
-        balance = user_temp.user.balance
         sort = request.GET.get('sort', "")
-        return render(request, 'usercenter-account.html', {'balance' : balance, 'sort':sort})
+        if hasattr(user_temp,'user'):
+            balance = user_temp.user.balance
+
+           # card = Card.objects.filter(user=user_temp.id)
+
+            card_id = user_temp.user.card_id
+            has_card = True
+            return render(request, 'usercenter-account.html', {'balance': balance, 'sort': sort,
+                                                               'has_card':has_card,
+                                                               'card_id': card_id})
+        else:
+            message = "哥，办个卡吧"
+            has_card = False
+            return render(request, 'usercenter-account.html', {'message' : message,
+                                                               'has_card': has_card})
 
 
 class MymessageView(LoginRequiredMixin, View):
@@ -268,6 +281,16 @@ class MymessageView(LoginRequiredMixin, View):
         messages = p.page(page)
         return render(request, 'usercenter-message.html', {
             "messages":messages
+        })
+
+class TransFerView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        user_temp = request.user
+
+        messages = ""
+        return render(request, 'usercenter-transfer.html', {
+            "messages": messages
         })
 
 def page_not_found(request):

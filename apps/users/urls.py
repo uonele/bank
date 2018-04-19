@@ -4,7 +4,7 @@ __author__ = 'bobby'
 from django.conf.urls import url, include
 
 from .views import UserinfoView, UploadImageView, UpdatePwdView, SendEmailCodeView
-from .views import UpdateEmailView, MymessageView
+from .views import UpdateEmailView, MymessageView, MyaccountView,TransFerView
 
 urlpatterns = [
     # 用户信息
@@ -25,4 +25,9 @@ urlpatterns = [
     # 我的消息
     url(r'^mymessage/$', MymessageView.as_view(), name="mymessage"),
 
+    # 账户余额
+    url(r'^myaccount/$', MyaccountView.as_view(), name="myaccount"),
+
+    # 转账
+    url(r'^transfer/$', TransFerView.as_view(), name="transfer"),
 ]

@@ -27,7 +27,7 @@ class UserProfile(AbstractUser):
 
 class Card(models.Model):
 
-    card_id = models.CharField(verbose_name=u"卡号", max_length=11, primary_key=True)
+    card_id = models.AutoField(verbose_name=u"卡号", primary_key=True)
     user = models.OneToOneField(UserProfile, verbose_name=u"持卡人", related_name='user')
     balance = models.FloatField(verbose_name=u"余额", default=0)
 
@@ -44,7 +44,14 @@ class Card(models.Model):
 
 # 转账信息表
 class TradeInfo(models.Model):
-    trade_id = models.CharField(verbose_name=u"交易流水号", max_length=9, default=u"", primary_key=True)
+
+    """
+    AutoField 为int 自增列，必须填入参数 primary_key=True
+    BigAutoField(AutoField)
+        bigint自增列，必须填入参数 primary_key=True
+    """
+
+    trade_id = models.AutoField(verbose_name=u"交易流水号", primary_key=True)
     trade_type = models.CharField(verbose_name=u"交易类型", choices=(("transfer", u"转账"), ("draw", u"取款"), ("deposit", u"存款")), max_length=8)
     trade_amount = models.FloatField(verbose_name=u"交易金额", default=0)
 

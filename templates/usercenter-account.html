@@ -16,8 +16,11 @@
     <div class="right" >
 		<div class="personal_des Releasecont">
 			<div class="head">
-				<h1>余&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;额：
-        <input class="borderno" type="text" name="email" readonly="readonly" value="{{ balance }}"/></h1>
+				{% if has_card %}
+				<h1>您的卡号&nbsp;{{ card_id }}&nbsp;余额为：&nbsp;{{ balance }}&nbsp;元</h1>
+                    {% else %}
+                    <h1>{{ message }}</h1>
+				{% endif %}
 			</div>
 
 		</div>
