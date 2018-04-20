@@ -6,6 +6,17 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+class UserMessage(models.Model):
+    user = models.IntegerField(default=0,verbose_name=u'接受用户')
+    message = models.CharField(max_length=500,verbose_name=u'消息内容')
+    has_read = models.BooleanField(default=False,verbose_name=u'是否已读')
+    add_time = models.DateTimeField(default=datetime.now,verbose_name=u'发送时间')
+
+    class Meta:
+        verbose_name = u'用户消息'
+        verbose_name_plural = verbose_name
+
+
 class UserProfile(AbstractUser):
 
     nick_name = models.CharField(max_length=50, verbose_name=u"昵称", default="")
@@ -23,6 +34,10 @@ class UserProfile(AbstractUser):
 
     def __unicode__(self):
         return self.username
+
+    def unread_nums(self):
+        #获取用户未读消息的数量
+        return UserMessage.objects.filter(user=self.id, has_read=False).count()
 
 
 class Card(models.Model):
@@ -86,13 +101,5 @@ class EmailVerifyRecord(models.Model):
         return '{0}({1})'.format(self.code, self.email)
 
 
-class UserMessage(models.Model):
-    user = models.IntegerField(default=0,verbose_name=u'接受用户')
-    message = models.CharField(max_length=500,verbose_name=u'消息内容')
-    has_read = models.BooleanField(default=False,verbose_name=u'是否已读')
-    add_time = models.DateTimeField(default=datetime.now,verbose_name=u'发送时间')
 
-    class Meta:
-        verbose_name = u'用户消息'
-        verbose_name_plural = verbose_name
 

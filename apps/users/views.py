@@ -63,6 +63,11 @@ class RegisterView(View):
             user_profile.password = make_password(pass_word)
             user_profile.save()
 
+            #写入欢迎注册消息
+            user_message = UserMessage()
+            user_message.user = user_profile.id
+            user_message.message = "欢迎注册慕学在线网"
+            user_message.save()
             send_register_email(user_name, "register")
             return render(request, "login.html")
         else:
@@ -142,6 +147,11 @@ class ModifyPwdView(View):
             user.password = make_password(pwd2)
             user.save()
 
+            #写入修改密码的消息
+            user_message = UserMessage()
+            user_message.user = UserProfile.objects.get(email=email).id
+            user_message.message = "修改了密码"
+            user_message.save()
             return render(request, "login.html")
         else:
             email = request.POST.get("email", "")
@@ -194,6 +204,11 @@ class UpdatePwdView(View):
             user = request.user
             user.password = make_password(pwd2)
             user.save()
+
+            user_message = UserMessage()
+            user_message.user = request.user.id
+            user_message.message = "在个人中心修改了密码"
+            user_message.save()
 
             return HttpResponse('{"status":"success"}', content_type='application/json')
         else:
