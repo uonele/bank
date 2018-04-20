@@ -20,42 +20,42 @@
 			</div>
 			<div class="inforcon">
 
-				<form class="perinform" id="jsEditUserForm" autocomplete="off">
+                {% if has_card %}
+
+
+
+				<form action="{% url 'users:transfer' %}" class="perinform"  autocomplete="off" method="post">
 					<ul class="right">
-						<li>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：
-                           <input type="text" name="nick_name" id="nick_name" value="{{ request.user.nick_name|default_if_none:''}}" maxlength="10">
+						<li>支&nbsp;付&nbsp;卡&nbsp;号&nbsp;：
+                           <input type="text" name="from_cardid" readonly="readonly" id="from_cardid" value="{{ card_id }}" maxlength="11">
                             <i class="error-tips"></i>
                         </li>
-						<li>生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日：
-                           <input type="text" id="birth_day" name="birday" value="{{ request.user.birday|date:'Y-m-d'|default_if_none:''}}" readonly="readonly"/>
+                        <li>卡&nbsp;内&nbsp;余&nbsp;额&nbsp;：
+                           <input type="text" name="balance" readonly="readonly" id="balance" value="{{ balance }}" maxlength="11">
                             <i class="error-tips"></i>
-						</li>
-						<li>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：
-							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio"  name="gender" value="male" {% if request.user.gender == 'male' %}checked="checked"{% endif %}>男</label>
-							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="gender" value="female" {% if request.user.gender == 'female' %}checked="checked"{% endif %}>女</label>
-						</li>
-						<li class="p_infor_city">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：
-                            <input type="text" name="address" id="address" placeholder="请输入你的地址" value="{{ request.user.address }}" maxlength="10">
-						    <i class="error-tips"></i>
                         </li>
-						<li>手&nbsp;&nbsp;机&nbsp;&nbsp;号：
-                            <input type="text" name="mobile" id="mobile" placeholder="请输入你的手机号码" value="{{ request.user.mobile |default_if_none:''}}" maxlength="11">
+                        <li>收&nbsp;款&nbsp;卡&nbsp;号&nbsp;：
+                           <input type="text" name="to_cardid"  id="to_cardid" placeholder="请输入收款卡号" maxlength="11">
+                            <i class="error-tips"></i>{{ message }}
                         </li>
 
-                        <li>身份证号&nbsp;：
-                            <input type="text" name="mobile" id="mobile" placeholder="请输入你的身份证号码" value="{{ request.user.id_card |default_if_none:''}}" maxlength="18">
-                        </li>
+                        <li>交&nbsp;易&nbsp;金&nbsp;额&nbsp;：
+                            <input type="text" name="trade_amount" id="trade_amount" placeholder="请输入交易金额"  maxlength="18">
+                        </li>{{ balance_info }}
 
-                        <li>邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：
-                        	<input class="borderno" type="text" name="email" readonly="readonly" value="{{ request.user.email }}"/>
-                            <span class="green changeemai_btn">[修改]</span>
-                    	</li>
 						<li class="button heibtn">
-							<input type="button" id="jsEditUserBtn" value="保存">
+                            <input type="submit" value="保存"/>
+{#							<input type="button" id="jsEditUserBtn" value="保存">#}
 						</li>
 					</ul>
                     {% csrf_token %}
 				</form>
+
+                {% else %}
+                    <h1>那个，{{ message }}</h1>
+				{% endif %}
+
+
 			</div>
 		</div>
 	</div>
