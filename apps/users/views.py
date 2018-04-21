@@ -300,7 +300,7 @@ class MymessageView(LoginRequiredMixin, View):
             })
 
 
-class TransFerView(LoginRequiredMixin, View):
+class TransferView(LoginRequiredMixin, View):
     """
     用户转账
     """
@@ -398,6 +398,13 @@ class WithdrowView(LoginRequiredMixin,View):
                 card.balance -= float(trade_amount.encode("utf-8"))
                 card.save()
 
+                user_tradeinfo = TradeInfo()
+                user_tradeinfo.trade_type = "draw"
+                user_tradeinfo.from_card_id = request.user.user.card_id
+                user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
+                user_tradeinfo.trade_amount = trade_amount
+                user_tradeinfo.save()
+
                 user_message = UserMessage()
                 user_message.user = request.user.id
                 user_message.message = "取款 " + trade_amount + "元"
@@ -435,6 +442,13 @@ class DepositeView(LoginRequiredMixin, View):
         if match:
             card.balance += float(trade_amount.encode("utf-8"))
             card.save()
+
+            user_tradeinfo = TradeInfo()
+            user_tradeinfo.trade_type = "deposit"
+            user_tradeinfo.from_card_id = request.user.user.card_id
+            user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
+            user_tradeinfo.trade_amount = trade_amount
+            user_tradeinfo.save()
 
             user_message = UserMessage()
             user_message.user = request.user.id

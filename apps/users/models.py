@@ -72,8 +72,8 @@ class TradeInfo(models.Model):
 
     # 下面外键中引用了card，所以要把card类的定义，放在前面。
     # 或者使用'card'的形式
-    from_card = models.ForeignKey(Card, related_name='from_card', verbose_name=u"转出账户")
-    to_card = models.ForeignKey(Card, related_name='to_card', verbose_name=u"转入账户")
+    from_card = models.ForeignKey(Card, related_name='from_card', verbose_name=u"转出账户", null=True, blank=True)
+    to_card = models.ForeignKey(Card, related_name='to_card', verbose_name=u"转入账户", null=True, blank=True)
     trade_time = models.DateTimeField(verbose_name=u"交易时间", default=datetime.now)
     trade_status = models.CharField(verbose_name=u"交易状态", choices=(("success", u"成功"), ("fail", u"失败")), max_length=7)
 
