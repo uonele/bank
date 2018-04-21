@@ -1,43 +1,6 @@
 {% extends 'usercenter-base.html' %}
 {% block title %}转账- 个人网上银行{% endblock %}
 
-{% block custom_myjs %}
-    <script type="text/javascript">
-function validate()
-{
-var age=document.getElementById("trade_amount").value
-submitOK="true"
-if (isNaN(age)||age<1||age>100)
- {alert("年龄必须是 1 与 100 之间的数字。")
- submitOK="false"}
-
-if (submitOK=="false")
- {
- return false
- }
-}
-</script>
-{% load staticfiles %}
-
-
-
-{#    <script type="text/javascript">#}
-{#    //转账金额校验#}
-{#    function upperCase()#}
-{#    {#}
-{#    var x=document.getElementById("trade_amount").value#}
-{#        var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;#}
-{#        if (!reg.test(x)){#}
-{#            $.messager.alert({#}
-{#                title : '提示信息!',#}
-{#                msg : '保证金金额的输入格式不正确,请确认!'#}
-{#            });#}
-{#            return ;#}
-{#        }#}
-{#    }#}
-{#</script>#}
-{% endblock %}
-
 {% block custom_bread %}
     <section>
         <div class="wp">
@@ -56,11 +19,6 @@ if (submitOK=="false")
 				<h1>行  内  转  账</h1>
 			</div>
 			<div class="inforcon">
-
-                {% if has_card %}
-
-
-
 				<form action="{% url 'users:transfer' %}" class="perinform"  autocomplete="off" method="post" onsubmit="return validate()">
 					<ul class="right">
 						<li>支&nbsp;付&nbsp;卡&nbsp;号&nbsp;：
@@ -88,12 +46,6 @@ if (submitOK=="false")
 					</ul>
                     {% csrf_token %}
 				</form>
-
-                {% else %}
-                    <h1>那个，{{ message }}</h1>
-				{% endif %}
-
-
 			</div>
 		</div>
 	</div>

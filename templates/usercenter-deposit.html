@@ -1,0 +1,50 @@
+{% extends 'usercenter-base.html' %}
+{% block title %}存款 - 个人网上银行{% endblock %}
+
+{% block custom_bread %}
+    <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>存  款</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block right_content %}
+    <div class="right">
+		<div class="personal_des ">
+			<div class="head" style="border:1px solid #eaeaea;">
+				<h1>存   款</h1>
+			</div>
+			<div class="inforcon">
+				<form action="{% url 'users:deposit' %}" class="perinform"  autocomplete="off" method="post" >
+					<ul class="right">
+						<li>银&nbsp;行&nbsp;卡&nbsp;号&nbsp;：
+                           <input type="text" name="cardid" readonly="readonly" id="cardid" value="{{ request.user.user.card_id }}" maxlength="11">
+                            <i class="error-tips"></i>
+                        </li>
+                        <li>卡&nbsp;内&nbsp;余&nbsp;额&nbsp;：
+                           <input type="text" name="balance" readonly="readonly" id="balance" value="{{ card.balance }}" maxlength="11">
+                            <i class="error-tips"></i>
+                        </li>
+
+                        <li>存&nbsp;款&nbsp;金&nbsp;额&nbsp;：
+                            <input type="text" name="trade_amount" id="trade_amount" placeholder="请输入存款金额"  maxlength="18">
+                            <font size="3" color="red">{{ balance_error_info }}</font>
+                        </li>
+
+						<li class="button heibtn">
+                            <input type="submit"  value="存钱"/>
+						</li>
+					</ul>
+                    {% csrf_token %}
+				</form>
+
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+

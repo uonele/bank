@@ -3,8 +3,8 @@ __author__ = 'bobby'
 
 from django.conf.urls import url, include
 
-from .views import UserinfoView, UploadImageView, UpdatePwdView, SendEmailCodeView
-from .views import UpdateEmailView, MymessageView, MyaccountView,TransFerView
+from .views import UserinfoView, UploadImageView, UpdatePwdView, SendEmailCodeView, DepositeView
+from .views import UpdateEmailView, MymessageView, MyaccountView,TransFerView, WithdrowView
 
 urlpatterns = [
     # 用户信息
@@ -25,6 +25,17 @@ urlpatterns = [
     # 我的消息
     url(r'^mymessage/$', MymessageView.as_view(), name="mymessage"),
 
+    # 取款
+    url(r'^withdraw/$', WithdrowView.as_view(), name="withdraw"),
+
+    # 存款
+    url(r'^deposit/$', DepositeView.as_view(), name="deposit"),
+
+    # 办卡
+    url(r'^add_card/$', MymessageView.as_view(), name="add_card"),
+
+    # 交易记录
+    url(r'^translation_record/$', MymessageView.as_view(), name="translation_record"),
     # 账户余额
     url(r'^myaccount/$', MyaccountView.as_view(), name="myaccount"),
 

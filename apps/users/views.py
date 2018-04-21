@@ -166,7 +166,11 @@ class UserinfoView(LoginRequiredMixin, View):
     用户个人信息
     """
     def get(self, request):
-        return render(request, 'usercenter-info.html', {})
+        user_temp = request.user
+        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            return render(request, 'usercenter-info.html', {'has_card': True})
+        else:
+            return render(request, 'usercenter-info.html', {'has_card': False})
 
     def post(self, request):
         user_info_form = UserInfoForm(request.POST, instance=request.user)
@@ -255,12 +259,9 @@ class MyaccountView(LoginRequiredMixin, View):
         user_temp = request.user
         if hasattr(user_temp,'user'):
             card = Card.objects.get(card_id=user_temp.user.card_id)
-            has_card = True
-            return render(request, 'usercenter-account.html', {'card':card, 'has_card': has_card})
+            return render(request, 'usercenter-account.html', {'card':card, 'has_card': True})
         else:
-            message = "哥，办个卡吧"
-            has_card = False
-            return render(request, 'usercenter-account.html', {'message' : message, 'has_card': has_card})
+            return render(request, 'usercenter-account.html', {'has_card': False})
 
 
 class MymessageView(LoginRequiredMixin, View):
@@ -285,9 +286,18 @@ class MymessageView(LoginRequiredMixin, View):
         p = Paginator(all_messages, 5, request=request)
 
         messages = p.page(page)
-        return render(request, 'usercenter-message.html', {
-            "messages":messages
-        })
+
+        user_temp = request.user
+        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            return render(request, 'usercenter-message.html', {
+            "messages": messages,
+            'has_card': True
+            })
+        else:
+            return render(request, 'usercenter-message.html', {
+                "messages": messages,
+                'has_card': False
+            })
 
 
 class TransFerView(LoginRequiredMixin, View):
@@ -298,13 +308,9 @@ class TransFerView(LoginRequiredMixin, View):
         user_temp = request.user
         if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
             card = Card.objects.get(card_id=user_temp.user.card_id)
-            has_card = True
-            return render(request, 'usercenter-transfer.html', {'card':card, 'has_card': has_card})
+            return render(request, 'usercenter-transfer.html', {'card':card, 'has_card':True})
         else:
-            message = "哥，办个卡吧"
-            has_card = False
-            return render(request, 'usercenter-transfer.html', {'message': message,
-                                                                'has_card': has_card})
+            return render(request, 'usercenter-transfer.html', {'has_card': False})
 
     def post(self, request):
         user_temp = request.user
@@ -355,17 +361,108 @@ class TransFerView(LoginRequiredMixin, View):
                 user_message.user = request.user.id
                 user_message.message = "向卡号 "+to_cardid+"转账 "+  trade_amount+"元"
                 user_message.save()
-                has_card = True
-                return render(request, 'usercenter-account.html', {'card' : card_out, 'has_card': has_card})
+                return render(request, 'usercenter-account.html', {'card' : card_out, 'has_card':True})
             else:
                 card = Card.objects.get(card_id=user_temp.user.card_id)
-                return render(request, 'usercenter-transfer.html', {'message': message, 'card': card, 'has_card': True,
+                return render(request, 'usercenter-transfer.html', {'message': message, 'card': card, 'has_card':True,
                                                                     'balance_error_info': balance_error_info})
         else:
             card = Card.objects.get(card_id=user_temp.user.card_id)
             message = "卡号"+to_cardid + "不存在"
-            return render(request, 'usercenter-transfer.html', {'message':message,'card':card, 'has_card': True,
+            return render(request, 'usercenter-transfer.html', {'message':message,'card':card, 'has_card':True,
                                                                 'balance_error_info':balance_error_info})
+
+
+class WithdrowView(LoginRequiredMixin,View):
+    """
+    用户取款
+    """
+    def get(self, request):
+        user_temp = request.user
+        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            card = Card.objects.get(card_id=user_temp.user.card_id)
+            return render(request, 'usercenter-withdrow.html', {'card':card, 'has_card':True})
+        else:
+            return render(request, 'usercenter-withdrow.html', {'has_card':False})
+
+    def post(self, request):
+        trade_amount = request.POST.get("trade_amount") # 需要校验
+        balance = request.POST.get("balance")
+        card = Card.objects.get(card_id=request.user.user.card_id)
+
+        pattern = re.compile(r'^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$')
+        match = pattern.match(trade_amount.encode("utf-8"))
+        if match:
+            if float(trade_amount.encode("utf-8")) < float(balance.encode("utf-8")):
+
+                card.balance -= float(trade_amount.encode("utf-8"))
+                card.save()
+
+                user_message = UserMessage()
+                user_message.user = request.user.id
+                user_message.message = "取款 " + trade_amount + "元"
+                user_message.save()
+                info = "取款成功， "
+                return render(request, 'usercenter-account.html', {'info':info ,'card': card, 'has_card': True})
+            else:
+                balance_error_info = "余额不足"
+        else:
+            balance_error_info = "金额只能是数字，且不能小于零"
+
+        return render(request, 'usercenter-withdrow.html', {'card': card, 'has_card': True,
+                                                            'balance_error_info' : balance_error_info})
+
+
+class DepositeView(LoginRequiredMixin, View):
+    """
+    用户存款
+    """
+    def get(self, request):
+        user_temp = request.user
+        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            card = Card.objects.get(card_id=user_temp.user.card_id)
+            return render(request, 'usercenter-deposit.html', {'card': card, 'has_card': True})
+        else:
+            return render(request, 'usercenter-deposit.html', {'has_card': False})
+
+    def post(self, request):
+        trade_amount = request.POST.get("trade_amount")  # 需要校验存款金额
+        card = Card.objects.get(card_id=request.user.user.card_id)
+
+        # 正则匹配
+        pattern = re.compile(r'^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$')
+        match = pattern.match(trade_amount.encode("utf-8"))
+        if match:
+            card.balance += float(trade_amount.encode("utf-8"))
+            card.save()
+
+            user_message = UserMessage()
+            user_message.user = request.user.id
+            user_message.message = "存款 " + trade_amount + " 元"
+            user_message.save()
+
+            info = "存款成功， "
+            return render(request, 'usercenter-account.html', {'info': info, 'card': card, 'has_card': True})
+        else:
+            balance_error_info = "金额只能是数字，且不能小于零"
+            return render(request, 'usercenter-deposit.html', {'card': card, 'has_card': True,
+                                                            'balance_error_info': balance_error_info})
+
+# 不要过早优化。
+
+# def has_card(request):
+#     return hasattr(request.user, 'user')
+#
+#
+# """
+# 如有卡，返回一个card对象
+# """
+# def get_card(request):
+#     if has_card(request):
+#         card = Card.objects.get(card_id=request.user.user.card_id)
+#         return card
+#     else:
+#         return None
 
 
 def page_not_found(request):

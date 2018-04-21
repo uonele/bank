@@ -92,9 +92,14 @@
         <ul>
 
             <li ><a href="{% url 'users:user_info' %}">个人信息</a></li>
-            <li ><a href="{% url 'users:myaccount' %}">个人财产</a></li>
+            {% if has_card %}
+            <li ><a href="{% url 'users:myaccount' %}">账户余额</a></li>
             <li ><a href="{% url 'users:transfer' %}">账户转账</a></li>
-            <li ><a href="#">交易记录</a></li>
+            <li ><a href="{% url 'users:deposit' %}">用户存款</a></li>
+            <li ><a href="{% url 'users:withdraw' %}">用户取款</a></li>
+            {% else %}
+                <li ><a href="{% url 'users:add_card' %}">我的账户</a></li>
+            {% endif %}
             <li >
                 <a href="{% url 'users:mymessage' %}" style="position: relative;">
                     我的消息
@@ -104,64 +109,7 @@
 	</div>
 
     {% block right_content %}
-    <div class="right">
-		<div class="personal_des ">
-			<div class="head" style="border:1px solid #eaeaea;">
-				<h1>个人信息</h1>
-			</div>
-			<div class="inforcon">
-				<div class="left" style="width:242px;">
-                    <iframe id='frameFile' name='frameFile' style='display: none;'></iframe>
-                    <form class="clearfix" id="jsAvatarForm" enctype="multipart/form-data" autocomplete="off" method="post" action="/user/avatar/upload/" target='frameFile'>
-                        <label class="changearea" for="avatarUp">
-                            <span id="avatardiv" class="pic">
-                                <img width="100" height="100" class="js-img-show" id="avatarShow" src="/uploads/avatar/default_big.png"/>
-                            </span>
-                            <span class="fl upload-inp-box" style="margin-left:70px;">
-                                <span class="button btn-green btn-w100" id="jsAvatarBtn">修改头像</span>
-                                <input type="file" name="avatar_url" id="avatarUp" class="js-img-up"/>
-                            </span>
-                        </label>
-                        <input type='hidden' name='csrfmiddlewaretoken' value='sJcSi17mvC0dE06Qj4LH2i17uic2JOgy' />
-                    </form>
-                    <div style="border-top:1px solid #eaeaea;margin-top:30px;">
-                        <a class="button btn-green btn-w100" id="jsUserResetPwd" style="margin:80px auto;width:100px;">修改密码</a>
-                    </div>
-				</div>
-				<form class="perinform" id="jsEditUserForm" autocomplete="off">
-					<ul class="right">
-						<li>昵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：
-                           <input type="text" name="nick_name" id="nick_name" value="管理员" maxlength="10">
-                            <i class="error-tips"></i>
-                        </li>
-						<li>生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日：
-                           <input type="text" id="birth_day" name="birday" value="2016-03-10" readonly="readonly"/>
-                            <i class="error-tips"></i>
-						</li>
-						<li>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：
-							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio"  name="gender" value="male" checked="checked">男</label>
-							<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="gender" value="female" >女</label>
-						</li>
-						<li class="p_infor_city">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：
-                            <input type="text" name="address" id="nick_name" placeholder="请输入你的地址" maxlength="10">
-						    <i class="error-tips"></i>
-                        </li>
-						<li>手&nbsp;&nbsp;机&nbsp;&nbsp;号：
-                            <input type="text" name="mobile" id="mobile" placeholder="请输入你的手机号码" maxlength="10">
-                        </li>
-                        <li>邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：
-                        	<input class="borderno" type="text" name="email" readonly="readonly" value="admin@admin.com"/>
-                            <span class="green changeemai_btn">[修改]</span>
-                    	</li>
-						<li class="button heibtn">
-							<input type="button" id="jsEditUserBtn" value="保存">
-						</li>
-					</ul>
-                    {% csrf_token %}
-				</form>
-			</div>
-		</div>
-	</div>
+
     {% endblock %}
 
 	</div>
