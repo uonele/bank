@@ -1,6 +1,43 @@
 {% extends 'usercenter-base.html' %}
 {% block title %}转账- 个人网上银行{% endblock %}
+
+{% block custom_myjs %}
+    <script type="text/javascript">
+function validate()
+{
+var age=document.getElementById("trade_amount").value
+submitOK="true"
+if (isNaN(age)||age<1||age>100)
+ {alert("年龄必须是 1 与 100 之间的数字。")
+ submitOK="false"}
+
+if (submitOK=="false")
+ {
+ return false
+ }
+}
+</script>
 {% load staticfiles %}
+
+
+
+{#    <script type="text/javascript">#}
+{#    //转账金额校验#}
+{#    function upperCase()#}
+{#    {#}
+{#    var x=document.getElementById("trade_amount").value#}
+{#        var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;#}
+{#        if (!reg.test(x)){#}
+{#            $.messager.alert({#}
+{#                title : '提示信息!',#}
+{#                msg : '保证金金额的输入格式不正确,请确认!'#}
+{#            });#}
+{#            return ;#}
+{#        }#}
+{#    }#}
+{#</script>#}
+{% endblock %}
+
 {% block custom_bread %}
     <section>
         <div class="wp">
@@ -24,27 +61,28 @@
 
 
 
-				<form action="{% url 'users:transfer' %}" class="perinform"  autocomplete="off" method="post">
+				<form action="{% url 'users:transfer' %}" class="perinform"  autocomplete="off" method="post" onsubmit="return validate()">
 					<ul class="right">
 						<li>支&nbsp;付&nbsp;卡&nbsp;号&nbsp;：
-                           <input type="text" name="from_cardid" readonly="readonly" id="from_cardid" value="{{ card_id }}" maxlength="11">
+                           <input type="text" name="from_cardid" readonly="readonly" id="from_cardid" value="{{ request.user.user.card_id }}" maxlength="11">
                             <i class="error-tips"></i>
                         </li>
                         <li>卡&nbsp;内&nbsp;余&nbsp;额&nbsp;：
-                           <input type="text" name="balance" readonly="readonly" id="balance" value="{{ balance }}" maxlength="11">
+                           <input type="text" name="balance" readonly="readonly" id="balance" value="{{ card.balance }}" maxlength="11">
                             <i class="error-tips"></i>
                         </li>
                         <li>收&nbsp;款&nbsp;卡&nbsp;号&nbsp;：
                            <input type="text" name="to_cardid"  id="to_cardid" placeholder="请输入收款卡号" maxlength="11">
-                            <i class="error-tips"></i>{{ message }}
+                            <i class="error-tips"></i><font size="3" color="red">{{ message }}</font>
                         </li>
 
                         <li>交&nbsp;易&nbsp;金&nbsp;额&nbsp;：
-                            <input type="text" name="trade_amount" id="trade_amount" placeholder="请输入交易金额"  maxlength="18">
-                        </li>{{ balance_info }}
+                            <input type="text" name="trade_amount" id="trade_amount" placeholder="请输入交易金额" onblur="upperCase()"  maxlength="18">
+                            <font size="3" color="red">{{ balance_error_info }}</font>
+                        </li>
 
 						<li class="button heibtn">
-                            <input type="submit" value="保存"/>
+                            <input type="submit"  value="保存"/>
 {#							<input type="button" id="jsEditUserBtn" value="保存">#}
 						</li>
 					</ul>

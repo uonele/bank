@@ -1,4 +1,5 @@
 # _*_ encoding:utf-8 _*_
+import re
 import json
 import datetime
 
@@ -253,9 +254,9 @@ class MyaccountView(LoginRequiredMixin, View):
     def get(self, request):
         user_temp = request.user
         if hasattr(user_temp,'user'):
-            card_out = Card.objects.get(card_id=user_temp.user.card_id)
+            card = Card.objects.get(card_id=user_temp.user.card_id)
             has_card = True
-            return render(request, 'usercenter-account.html', {'card':card_out, 'has_card': has_card})
+            return render(request, 'usercenter-account.html', {'card':card, 'has_card': has_card})
         else:
             message = "哥，办个卡吧"
             has_card = False
@@ -295,15 +296,10 @@ class TransFerView(LoginRequiredMixin, View):
     """
     def get(self, request):
         user_temp = request.user
-        # sort = request.GET.get('sort', "")
         if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
-            balance = user_temp.user.balance  # 用于提示用户卡内余额
-            card_id = user_temp.user.card_id  # 用于显示转出卡号
+            card = Card.objects.get(card_id=user_temp.user.card_id)
             has_card = True
-            return render(request, 'usercenter-transfer.html', {'balance': balance,
-                                                                # 'sort': sort,
-                                                                'has_card': has_card,
-                                                                'card_id': card_id})
+            return render(request, 'usercenter-transfer.html', {'card':card, 'has_card': has_card})
         else:
             message = "哥，办个卡吧"
             has_card = False
@@ -321,49 +317,55 @@ class TransFerView(LoginRequiredMixin, View):
 
         # 校验卡号
         card_out = Card.objects.get(card_id=from_cardid)
-        card_in = Card.objects.get(card_id=to_cardid)
-        if card_in :
+        cards_in = Card.objects.filter(card_id=to_cardid)
+        if cards_in :
             exist_card = True
         else:
             exist_card = False
 
-        amount = float(trade_amount.encode("utf-8"))
-        # 校验金额
-        if amount > 0.0 and amount < float(balance.encode("utf-8")):
-            balance_info = ""
-            amount_status = True
-
+        pattern = re.compile(r'^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$')
+        match = pattern.match(trade_amount.encode("utf-8"))
+        if match:
+            if float(trade_amount.encode("utf-8")) < float(balance.encode("utf-8")):
+                balance_error_info = ""
+                amount_status = True
+            else:
+                balance_error_info = "余额不足"
+                amount_status = False
         else:
-            balance_info = "请检查你的输入的金额"
+            balance_error_info = "金额只能是数字，且不能小于零"
             amount_status = False
 
-        if exist_card and amount_status:
-            user_tradeinfo = TradeInfo()
-            user_tradeinfo.trade_type = "transfer"
-            user_tradeinfo.from_card_id = user_temp.user.card_id
-            user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
-            user_tradeinfo.trade_amount = trade_amount
-            user_tradeinfo.to_card_id = to_cardid
-            user_tradeinfo.save()
+        if exist_card :
+            if amount_status:
+                user_tradeinfo = TradeInfo()
+                user_tradeinfo.trade_type = "transfer"
+                user_tradeinfo.from_card_id = user_temp.user.card_id
+                user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
+                user_tradeinfo.trade_amount = trade_amount
+                user_tradeinfo.to_card_id = to_cardid
+                user_tradeinfo.save()
 
-            card_out.balance -= float(trade_amount.encode("utf-8"))
-            card_out.save()
-            card_in.balance += float(trade_amount.encode("utf-8"))
-            card_in.save()
+                card_out.balance -= float(trade_amount.encode("utf-8"))
+                card_out.save()
+                cards_in[0].balance += float(trade_amount.encode("utf-8"))
+                cards_in[0].save()
 
-            user_message = UserMessage()
-            user_message.user = request.user.id
-            user_message.message = "向卡号 "+to_cardid+"转账 "+  trade_amount+"元"
-            user_message.save()
-            has_card = True
-            return render(request, 'usercenter-account.html', {'card' : card_out, 'has_card': has_card})
-
+                user_message = UserMessage()
+                user_message.user = request.user.id
+                user_message.message = "向卡号 "+to_cardid+"转账 "+  trade_amount+"元"
+                user_message.save()
+                has_card = True
+                return render(request, 'usercenter-account.html', {'card' : card_out, 'has_card': has_card})
+            else:
+                card = Card.objects.get(card_id=user_temp.user.card_id)
+                return render(request, 'usercenter-transfer.html', {'message': message, 'card': card, 'has_card': True,
+                                                                    'balance_error_info': balance_error_info})
         else:
-            message = "用户不存在"
-            return render(request, 'usercenter-transfer.html', {'message':message,
-                                                                # 'sort': sort,
-                                                            'has_card':True,
-                                                                'balance_info':balance_info})
+            card = Card.objects.get(card_id=user_temp.user.card_id)
+            message = "卡号"+to_cardid + "不存在"
+            return render(request, 'usercenter-transfer.html', {'message':message,'card':card, 'has_card': True,
+                                                                'balance_error_info':balance_error_info})
 
 
 def page_not_found(request):
