@@ -16,15 +16,10 @@
     <div class="right" >
 		<div class="personal_des Releasecont">
 			<div class="head">
-				{% if has_card %}
 				<h1>{{ info }}您的卡号&nbsp;{{ request.user.user.card_id }}&nbsp;现余额为：{{ card.balance }}&nbsp;&nbsp;元</h1>
-                    {% else %}
-                    <h1>{{ message }}</h1>
-				{% endif %}
+
 			</div>
 		</div>
-
-
 	</div>
 {% endblock %}
 

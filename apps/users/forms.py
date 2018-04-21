@@ -32,7 +32,6 @@ class TradeInfoForm(forms.ModelForm):
         fields = ['trade_time','trade_type', 'from_card', 'to_card', 'trade_amount']
 
 
-
 class UploadImageForm(forms.ModelForm):
 
     class Meta:

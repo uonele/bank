@@ -57,7 +57,7 @@ class Card(models.Model):
         # 获取余额
         return self.balance
 
-# 转账信息表
+
 class TradeInfo(models.Model):
 
     """
@@ -84,8 +84,6 @@ class TradeInfo(models.Model):
     def __unicode__(self):
         return self.trade_id
 
-
-# 异常交易
 
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=20, verbose_name=u"验证码")
