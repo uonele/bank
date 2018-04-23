@@ -4,7 +4,7 @@ __author__ = 'bobby'
 from django.conf.urls import url, include
 
 from .views import UserinfoView, UploadImageView, UpdatePwdView, SendEmailCodeView, DepositeView
-from .views import UpdateEmailView, MymessageView, MyaccountView,TransferView, WithdrowView
+from .views import UpdateEmailView, MymessageView, MyaccountView,TransferView, WithdrowView, AddcardView
 
 urlpatterns = [
     # 用户信息
@@ -32,10 +32,11 @@ urlpatterns = [
     url(r'^deposit/$', DepositeView.as_view(), name="deposit"),
 
     # 办卡
-    url(r'^add_card/$', MymessageView.as_view(), name="add_card"),
+    url(r'^add_card/$', AddcardView.as_view(), name="add_card"),
 
     # 交易记录
     url(r'^translation_record/$', MymessageView.as_view(), name="translation_record"),
+
     # 账户余额
     url(r'^myaccount/$', MyaccountView.as_view(), name="myaccount"),
 

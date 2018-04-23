@@ -313,26 +313,23 @@ class TransferView(LoginRequiredMixin, View):
             return render(request, 'usercenter-transfer.html', {'has_card': False})
 
     def post(self, request):
-        user_temp = request.user
+        from_user = request.user
+        from_username = from_user.username
         message = ""
 
         from_cardid = request.POST.get("from_cardid")  # 需要校验
         to_cardid = request.POST.get("to_cardid")       # 需要校验
         trade_amount = request.POST.get("trade_amount") # 需要校验
-        balance = request.POST.get("balance")
 
         # 校验卡号
         card_out = Card.objects.get(card_id=from_cardid)
+        balance = card_out.balance
         cards_in = Card.objects.filter(card_id=to_cardid)
-        if cards_in :
-            exist_card = True
-        else:
-            exist_card = False
 
         pattern = re.compile(r'^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$')
         match = pattern.match(trade_amount.encode("utf-8"))
         if match:
-            if float(trade_amount.encode("utf-8")) < float(balance.encode("utf-8")):
+            if float(trade_amount.encode("utf-8")) < balance:
                 balance_error_info = ""
                 amount_status = True
             else:
@@ -342,11 +339,11 @@ class TransferView(LoginRequiredMixin, View):
             balance_error_info = "金额只能是数字，且不能小于零"
             amount_status = False
 
-        if exist_card :
+        if cards_in :
             if amount_status:
                 user_tradeinfo = TradeInfo()
                 user_tradeinfo.trade_type = "transfer"
-                user_tradeinfo.from_card_id = user_temp.user.card_id
+                user_tradeinfo.from_card_id = from_user.user.card_id
                 user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
                 user_tradeinfo.trade_amount = trade_amount
                 user_tradeinfo.to_card_id = to_cardid
@@ -357,17 +354,27 @@ class TransferView(LoginRequiredMixin, View):
                 cards_in[0].balance += float(trade_amount.encode("utf-8"))
                 cards_in[0].save()
 
-                user_message = UserMessage()
-                user_message.user = request.user.id
-                user_message.message = "向卡号 "+to_cardid+"转账 "+  trade_amount+"元"
-                user_message.save()
+
+                to_user = cards_in[0].user
+                to_username = to_user.username
+
+                user_message_1 = UserMessage()
+                user_message_1.user = request.user.id
+                user_message_1.message = "向用户 " + to_username + " 转账 "+  trade_amount+"元"
+                user_message_1.save()
+
+                user_message_2 = UserMessage()
+                user_message_2.user = to_user.id
+                user_message_2.message = "收到用户 " + from_username + " 转账 " + trade_amount + "元"
+                user_message_2.save()
+
                 return render(request, 'usercenter-account.html', {'card' : card_out, 'has_card':True})
             else:
-                card = Card.objects.get(card_id=user_temp.user.card_id)
+                card = Card.objects.get(card_id=from_user.user.card_id)
                 return render(request, 'usercenter-transfer.html', {'message': message, 'card': card, 'has_card':True,
                                                                     'balance_error_info': balance_error_info})
         else:
-            card = Card.objects.get(card_id=user_temp.user.card_id)
+            card = Card.objects.get(card_id=from_user.user.card_id)
             message = "卡号"+to_cardid + "不存在"
             return render(request, 'usercenter-transfer.html', {'message':message,'card':card, 'has_card':True,
                                                                 'balance_error_info':balance_error_info})
@@ -462,21 +469,27 @@ class DepositeView(LoginRequiredMixin, View):
             return render(request, 'usercenter-deposit.html', {'card': card, 'has_card': True,
                                                             'balance_error_info': balance_error_info})
 
-# 不要过早优化。
 
-# def has_card(request):
-#     return hasattr(request.user, 'user')
-#
-#
-# """
-# 如有卡，返回一个card对象
-# """
-# def get_card(request):
-#     if has_card(request):
-#         card = Card.objects.get(card_id=request.user.user.card_id)
-#         return card
-#     else:
-#         return None
+class AddcardView(LoginRequiredMixin, View):
+    def get(self, request):
+        message = "您还没有办理银行卡呢，点击下面按钮办理一张吧"
+        return render(request, 'usercenter-addcard.html', {'has_card': False, 'message':message})
+
+    def post(self, request):
+        user = request.user
+
+        card = Card()
+        card.user = user
+        card.balance = 0.0
+        card.save()
+
+        user_message = UserMessage()
+        user_message.user = request.user.id
+        user_message.message = "成功办理了银行卡！"
+        user_message.save()
+
+        message = "您已成功办理了一张银行卡，卡号为 " + str(card.card_id) +", 此卡不需要工本费，每人只能有一张卡"
+        return render(request, 'usercenter-addcard.html', {'has_card': True, 'message':message})
 
 
 def page_not_found(request):

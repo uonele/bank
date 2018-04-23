@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'usercenter-base.html' %}
+{% block title %}我的账户 - 个人网上银行{% endblock %}
 
-</body>
-</html>
+{% block custom_bread %}
+    <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>开  卡</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block right_content %}
+    <div class="right">
+		<div class="personal_des ">
+			<div class="head" style="border:1px solid #eaeaea;">
+				<h1>{{ message }}</h1>
+			</div>
+            {% if not has_card %}
+			<div class="inforcon">
+				<form action="{% url 'users:add_card' %}" class="perinform"  autocomplete="off" method="post" >
+					<ul class="right">
+						<li class="button heibtn">
+                            <input type="submit"  value="办卡"/>
+						</li>
+					</ul>
+                    {% csrf_token %}
+				</form>
+            {% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
