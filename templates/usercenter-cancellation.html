@@ -1,0 +1,44 @@
+{% extends 'usercenter-base.html' %}
+{% block title %}销户 - 个人网上银行{% endblock %}
+
+{% block custom_bread %}
+    <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>销  户</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block right_content %}
+    <div class="right">
+		<div class="personal_des ">
+			<div class="head" style="border:1px solid #eaeaea;">
+				<h1>销    户</h1>
+			</div>
+
+
+
+			<div class="inforcon">
+
+                <form action="{% url 'users:cancellation' %}" class="perinform"  autocomplete="off" method="post" >
+					<ul class="right">
+                        <li>点击注销按钮之前，请先将账户全部余额取出.</li>
+                        <li>卡&nbsp;内&nbsp;余&nbsp;额&nbsp;：
+                           <input type="text" name="balance" readonly="readonly" id="balance" value="{{ card.balance }}" maxlength="11">
+                            <i class="error-tips"></i>
+                        </li>
+						<li class="button heibtn">
+                            <input type="submit"  value="注销"/>
+						</li>
+					</ul>
+                    {% csrf_token %}
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+

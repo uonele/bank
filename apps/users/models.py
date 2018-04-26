@@ -45,7 +45,7 @@ class Card(models.Model):
     card_id = models.AutoField(verbose_name=u"卡号", primary_key=True)
     user = models.OneToOneField(UserProfile, verbose_name=u"持卡人", related_name='user')
     balance = models.FloatField(verbose_name=u"余额", default=0)
-
+    is_active = models.IntegerField(verbose_name=u"银行卡状态", default=0)
     class Meta:
         verbose_name = "银行卡"
         verbose_name_plural = verbose_name

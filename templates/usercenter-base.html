@@ -93,10 +93,11 @@
 
             <li ><a href="{% url 'users:user_info' %}">个人信息</a></li>
             {% if has_card %}
-            <li ><a href="{% url 'users:myaccount' %}">账户余额</a></li>
-            <li ><a href="{% url 'users:transfer' %}">账户转账</a></li>
-            <li ><a href="{% url 'users:deposit' %}">用户存款</a></li>
-            <li ><a href="{% url 'users:withdraw' %}">用户取款</a></li>
+                <li ><a href="{% url 'users:myaccount' %}">账户余额</a></li>
+                <li ><a href="{% url 'users:transfer' %}">账户转账</a></li>
+                <li ><a href="{% url 'users:deposit' %}">用户存款</a></li>
+                <li ><a href="{% url 'users:withdraw' %}">用户取款</a></li>
+                <li ><a href="{% url 'users:cancellation' %}">用户销户</a></li>
             {% else %}
                 <li ><a href="{% url 'users:add_card' %}">我的账户</a></li>
             {% endif %}

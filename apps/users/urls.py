@@ -3,7 +3,7 @@ __author__ = 'bobby'
 
 from django.conf.urls import url, include
 
-from .views import UserinfoView, UploadImageView, UpdatePwdView, SendEmailCodeView, DepositeView
+from .views import UserinfoView, UploadImageView, UpdatePwdView, SendEmailCodeView, DepositeView, CancellationView
 from .views import UpdateEmailView, MymessageView, MyaccountView,TransferView, WithdrowView, AddcardView
 
 urlpatterns = [
@@ -42,4 +42,7 @@ urlpatterns = [
 
     # 转账
     url(r'^transfer/$', TransferView.as_view(), name="transfer"),
+
+    # 销户
+    url(r'^cancellation/$', CancellationView.as_view(), name="cancellation"),
 ]

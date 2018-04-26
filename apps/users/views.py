@@ -492,6 +492,20 @@ class AddcardView(LoginRequiredMixin, View):
         return render(request, 'usercenter-addcard.html', {'has_card': True, 'message':message})
 
 
+class CancellationView(LoginRequiredMixin, View):
+    def get(self, request):
+        card = Card.objects.get(card_id=request.user.user.card_id)
+        if card:
+            return render(request, 'usercenter-cancellation.html', {'is_activate': True, 'card': card, 'has_card': True})
+        else:
+            return render(request, 'usercenter-cancellation.html', {'is_activate': False, 'has_card': True})
+
+    def post(self, request):
+        card = Card.objects.get(card_id=request.user.user.card_id)
+        card.delete()
+        return render(request, 'usercenter-delete-success.html', {'has_card': False})
+
+
 def page_not_found(request):
 
     # 全局404处理函数
