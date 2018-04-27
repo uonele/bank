@@ -346,7 +346,6 @@ class TransferView(LoginRequiredMixin, View):
 
     def post(self, request):
         from_user = request.user
-        from_username = from_user.username
         message = ""
 
         from_cardid = request.POST.get("from_cardid")  # 需要校验
@@ -375,7 +374,7 @@ class TransferView(LoginRequiredMixin, View):
             if amount_status:
 
                 to_user = cards_in[0].user
-#                to_username = to_user.email
+                to_username = to_user.email
 
                 user_tradeinfo = TradeInfo()
                 user_tradeinfo.trade_type = "转账"
