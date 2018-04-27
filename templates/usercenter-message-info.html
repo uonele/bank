@@ -21,13 +21,13 @@
 
 		</div>
 		<div class="personal_des permessage">
-			<div class="head">
-				<ul class="tab_header messagehead">
-					<li class="active"><a href="/user/message/">个人消息</a> </li>
-				</ul>
+                        <div class="head">
+                    <ul class="tab_header messagehead">
+                        <li class="active"><a href="{% url 'users:message_info' %}">我的消息</a> </li>
+                        <li><a href="{% url 'users:message_trade' %}">交易信息 </a></li>
+                    </ul>
+                </div>
 
-
-			</div>
 			<div class="messagelist">
                 {% for message in messages.object_list %}
                     <div class="messages">

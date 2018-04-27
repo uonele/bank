@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="{% url 'users:mymessage' %}">
+                        <a href="{% url 'users:message_info' %}">
                             <div class="msg-num"><span id="MsgNum">{{ request.user.unread_nums }}</span></div>
                         </a>
                     {% else %}
@@ -102,7 +102,7 @@
                 <li ><a href="{% url 'users:add_card' %}">我的账户</a></li>
             {% endif %}
             <li >
-                <a href="{% url 'users:mymessage' %}" style="position: relative;">
+                <a href="{% url 'users:message_info' %}" style="position: relative;">
                     我的消息
                 </a>
             </li>

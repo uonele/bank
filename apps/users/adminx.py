@@ -19,9 +19,9 @@ class CardAdmin(object):
 
 
 class TradeInfoAdmin(object):
-    list_display = ['trade_id', 'trade_type', 'trade_amount', 'from_card', 'to_card', 'trade_time']
-    search_fields = ['trade_id', 'trade_type', 'trade_amount', 'from_card', 'to_card', 'trade_time']
-    list_filter = ['trade_id', 'trade_type', 'trade_amount', 'from_card', 'to_card', 'trade_time']
+    list_display = ['trade_id', 'trade_type', 'trade_amount', 'from_user', 'to_user', 'trade_time']
+    search_fields = ['trade_id', 'trade_type', 'trade_amount', 'from_user', 'to_user', 'trade_time']
+    list_filter = ['trade_id', 'trade_type', 'trade_amount', 'from_user', 'to_user', 'trade_time']
 
 
 class BaseSetting(object):

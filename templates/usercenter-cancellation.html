@@ -22,14 +22,14 @@
 
 
 			<div class="inforcon">
-
                 <form action="{% url 'users:cancellation' %}" class="perinform"  autocomplete="off" method="post" >
 					<ul class="right">
                         <li>点击注销按钮之前，请先将账户全部余额取出.</li>
                         <li>卡&nbsp;内&nbsp;余&nbsp;额&nbsp;：
                            <input type="text" name="balance" readonly="readonly" id="balance" value="{{ card.balance }}" maxlength="11">
-                            <i class="error-tips"></i>
+
                         </li>
+                        <li><i class="error-tips"></i><font size="3" color="red">{{ message }}</font></li>
 						<li class="button heibtn">
                             <input type="submit"  value="注销"/>
 						</li>

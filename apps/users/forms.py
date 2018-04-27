@@ -29,7 +29,7 @@ class ModifyPwdForm(forms.Form):
 class TradeInfoForm(forms.ModelForm):
     class Meta:
         model = TradeInfo
-        fields = ['trade_time','trade_type', 'from_card', 'to_card', 'trade_amount']
+        fields = ['trade_time','trade_type', 'from_user', 'to_user', 'trade_amount']
 
 
 class UploadImageForm(forms.ModelForm):

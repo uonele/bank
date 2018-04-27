@@ -1,0 +1,84 @@
+{% extends 'usercenter-base.html' %}
+{% block title %}交易信息- 个人网上银行{% endblock %}
+{% load staticfiles %}
+{% block custom_bread %}
+    <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>交易信息</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block right_content %}
+    <div class="right" >
+		<div class="personal_des Releasecont">
+			<div class="head">
+				<h1>交易信息</h1>
+			</div>
+
+		</div>
+		<div class="personal_des permessage">
+                        <div class="head">
+                    <ul class="tab_header messagehead">
+                        <li ><a href="{% url 'users:message_info' %}">我的消息</a> </li>
+                        <li class="active"><a href="{% url 'users:message_trade' %}">交易信息 </a></li>
+                    </ul>
+                </div>
+        
+			<div class="messagelist">
+                {% for message in messages.object_list %}
+                    <div class="messages">
+                        <div class="fr">
+                            <div class="top"><span class="fl time">{{ message.trade_time }}</span><span class="fr btn foldbtn"></span></div>
+                            <p>
+                               {% if message.trade_type == "转账" %}
+                                   {% if message.from_user == request.user %}
+                                       您向 {{ message.to_user.email }} 转账 {{ message.trade_amount }} 元
+                                       {% else %}
+                                        {{ message.from_user.email }} 向您 转账 {{ message.trade_amount }} 元
+                                   {% endif %}
+
+                                   {% else %}
+                                   {{ message.trade_type }} {{ message.trade_amount }} 元
+                               {% endif %} 
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+
+
+			</div>
+
+
+			<div class="pageturn pagerright">
+                <ul class="pagelist">
+                {% if messages.has_previous %}
+                    <li class="long"><a href="?{{ messages.previous_page_number.querystring }}">上一页</a></li>
+                {% endif %}
+
+                {% for page in messages.pages %}
+                    {% if page %}
+                        {% ifequal page messages.number %}
+                            <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                        {% else %}
+                            <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                        {% endifequal %}
+                    {% else %}
+                        <li class="none"><a href="">...</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if messages.has_next %}
+                    <li class="long"><a href="?{{ messages.next_page_number.querystring }}">下一页</a></li>
+                {% endif %}
+
+            </ul>
+            </div>
+		</div>
+
+	</div>
+{% endblock %}
+
+

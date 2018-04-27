@@ -14,7 +14,7 @@ from django.core.urlresolvers import reverse
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 
-from .models import UserProfile, EmailVerifyRecord,UserMessage,Card,TradeInfo
+from .models import UserProfile, EmailVerifyRecord, UserMessage, Card,TradeInfo
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, UploadImageForm
 from .forms import UserInfoForm,TradeInfoForm
 from utils.email_send import send_register_email
@@ -167,7 +167,7 @@ class UserinfoView(LoginRequiredMixin, View):
     """
     def get(self, request):
         user_temp = request.user
-        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+        if hasattr(user_temp, 'card'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
             return render(request, 'usercenter-info.html', {'has_card': True})
         else:
             return render(request, 'usercenter-info.html', {'has_card': False})
@@ -257,19 +257,20 @@ class MyaccountView(LoginRequiredMixin, View):
     """
     def get(self, request):
         user_temp = request.user
-        if hasattr(user_temp,'user'):
-            card = Card.objects.get(card_id=user_temp.user.card_id)
+        if hasattr(user_temp,'card'):
+            card = Card.objects.get(card_id=user_temp.card.card_id)
             return render(request, 'usercenter-account.html', {'card':card, 'has_card': True})
         else:
             return render(request, 'usercenter-account.html', {'has_card': False})
 
 
-class MymessageView(LoginRequiredMixin, View):
+class InfomessageView(LoginRequiredMixin, View):
     """
     我的消息
     """
     def get(self, request):
         all_messages = UserMessage.objects.filter(user=request.user.id).order_by('-add_time')
+
 
         #用户进入个人消息后清空未读消息的记录
         all_unread_messages = UserMessage.objects.filter(user=request.user.id, has_read=False)
@@ -288,13 +289,44 @@ class MymessageView(LoginRequiredMixin, View):
         messages = p.page(page)
 
         user_temp = request.user
-        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
-            return render(request, 'usercenter-message.html', {
+        if hasattr(user_temp, 'card'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            return render(request, 'usercenter-message-info.html', {
             "messages": messages,
             'has_card': True
             })
         else:
-            return render(request, 'usercenter-message.html', {
+            return render(request, 'usercenter-message-info.html', {
+                "messages": messages,
+                'has_card': False
+            })
+
+
+class TrademessageView(LoginRequiredMixin, View):
+    """
+    交易消息
+    """
+    def get(self, request):
+        all_messages = TradeInfo.objects.filter(Q(from_user=request.user)|Q(to_user=request.user)).order_by('-trade_time')
+        #all_messages = TradeInfo.objects.all().order_by('-trade_time')
+
+        #对个人消息进行分页
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(all_messages, 5, request=request)
+
+        messages = p.page(page)
+
+        user_temp = request.user
+        if hasattr(user_temp, 'card'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            return render(request, 'usercenter-message-trade.html', {
+            "messages": messages,
+            'has_card': True
+            })
+        else:
+            return render(request, 'usercenter-message-trade.html', {
                 "messages": messages,
                 'has_card': False
             })
@@ -306,8 +338,8 @@ class TransferView(LoginRequiredMixin, View):
     """
     def get(self, request):
         user_temp = request.user
-        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
-            card = Card.objects.get(card_id=user_temp.user.card_id)
+        if hasattr(user_temp, 'card'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            card = Card.objects.get(card_id=user_temp.card.card_id)
             return render(request, 'usercenter-transfer.html', {'card':card, 'has_card':True})
         else:
             return render(request, 'usercenter-transfer.html', {'has_card': False})
@@ -341,12 +373,16 @@ class TransferView(LoginRequiredMixin, View):
 
         if cards_in :
             if amount_status:
+
+                to_user = cards_in[0].user
+#                to_username = to_user.email
+
                 user_tradeinfo = TradeInfo()
-                user_tradeinfo.trade_type = "transfer"
-                user_tradeinfo.from_card_id = from_user.user.card_id
+                user_tradeinfo.trade_type = "转账"
+                user_tradeinfo.from_user = from_user
                 user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
                 user_tradeinfo.trade_amount = trade_amount
-                user_tradeinfo.to_card_id = to_cardid
+                user_tradeinfo.to_user = to_user
                 user_tradeinfo.save()
 
                 card_out.balance -= float(trade_amount.encode("utf-8"))
@@ -354,27 +390,23 @@ class TransferView(LoginRequiredMixin, View):
                 cards_in[0].balance += float(trade_amount.encode("utf-8"))
                 cards_in[0].save()
 
-
-                to_user = cards_in[0].user
-                to_username = to_user.username
-
-                user_message_1 = UserMessage()
-                user_message_1.user = request.user.id
-                user_message_1.message = "向用户 " + to_username + " 转账 "+  trade_amount+"元"
-                user_message_1.save()
-
-                user_message_2 = UserMessage()
-                user_message_2.user = to_user.id
-                user_message_2.message = "收到用户 " + from_username + " 转账 " + trade_amount + "元"
-                user_message_2.save()
+                # user_message_1 = UserMessage()
+                # user_message_1.user = request.user.id
+                # user_message_1.message = "向用户 " + to_username + " 转账 "+  trade_amount+"元"
+                # user_message_1.save()
+                #
+                # user_message_2 = UserMessage()
+                # user_message_2.user = to_user.id
+                # user_message_2.message = "收到用户 " + from_username + " 转账 " + trade_amount + "元"
+                # user_message_2.save()
 
                 return render(request, 'usercenter-account.html', {'card' : card_out, 'has_card':True})
             else:
-                card = Card.objects.get(card_id=from_user.user.card_id)
+                card = Card.objects.get(card_id=from_user.card.card_id)
                 return render(request, 'usercenter-transfer.html', {'message': message, 'card': card, 'has_card':True,
                                                                     'balance_error_info': balance_error_info})
         else:
-            card = Card.objects.get(card_id=from_user.user.card_id)
+            card = Card.objects.get(card_id=from_user.card.card_id)
             message = "卡号"+to_cardid + "不存在"
             return render(request, 'usercenter-transfer.html', {'message':message,'card':card, 'has_card':True,
                                                                 'balance_error_info':balance_error_info})
@@ -386,8 +418,8 @@ class WithdrowView(LoginRequiredMixin,View):
     """
     def get(self, request):
         user_temp = request.user
-        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
-            card = Card.objects.get(card_id=user_temp.user.card_id)
+        if hasattr(user_temp, 'card'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            card = Card.objects.get(card_id=user_temp.card.card_id)
             return render(request, 'usercenter-withdrow.html', {'card':card, 'has_card':True})
         else:
             return render(request, 'usercenter-withdrow.html', {'has_card':False})
@@ -395,7 +427,7 @@ class WithdrowView(LoginRequiredMixin,View):
     def post(self, request):
         trade_amount = request.POST.get("trade_amount") # 需要校验
         balance = request.POST.get("balance")
-        card = Card.objects.get(card_id=request.user.user.card_id)
+        card = Card.objects.get(card_id=request.user.card.card_id)
 
         pattern = re.compile(r'^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$')
         match = pattern.match(trade_amount.encode("utf-8"))
@@ -406,16 +438,17 @@ class WithdrowView(LoginRequiredMixin,View):
                 card.save()
 
                 user_tradeinfo = TradeInfo()
-                user_tradeinfo.trade_type = "draw"
-                user_tradeinfo.from_card_id = request.user.user.card_id
+                user_tradeinfo.trade_type = "取款"
+                user_tradeinfo.from_user = request.user
                 user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
                 user_tradeinfo.trade_amount = trade_amount
+                user_tradeinfo.message = "取款 " + trade_amount + "元"
                 user_tradeinfo.save()
 
-                user_message = UserMessage()
-                user_message.user = request.user.id
-                user_message.message = "取款 " + trade_amount + "元"
-                user_message.save()
+                # user_message = UserMessage()
+                # user_message.user = request.user.id
+                # user_message.message = "取款 " + trade_amount + "元"
+                # user_message.save()
                 info = "取款成功， "
                 return render(request, 'usercenter-account.html', {'info':info ,'card': card, 'has_card': True})
             else:
@@ -433,15 +466,15 @@ class DepositeView(LoginRequiredMixin, View):
     """
     def get(self, request):
         user_temp = request.user
-        if hasattr(user_temp, 'user'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
-            card = Card.objects.get(card_id=user_temp.user.card_id)
+        if hasattr(user_temp, 'card'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
+            card = Card.objects.get(card_id=user_temp.card.card_id)
             return render(request, 'usercenter-deposit.html', {'card': card, 'has_card': True})
         else:
             return render(request, 'usercenter-deposit.html', {'has_card': False})
 
     def post(self, request):
         trade_amount = request.POST.get("trade_amount")  # 需要校验存款金额
-        card = Card.objects.get(card_id=request.user.user.card_id)
+        card = Card.objects.get(card_id=request.user.card.card_id)
 
         # 正则匹配
         pattern = re.compile(r'^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$')
@@ -451,16 +484,17 @@ class DepositeView(LoginRequiredMixin, View):
             card.save()
 
             user_tradeinfo = TradeInfo()
-            user_tradeinfo.trade_type = "deposit"
-            user_tradeinfo.from_card_id = request.user.user.card_id
+            user_tradeinfo.trade_type = "存款"
+            user_tradeinfo.from_user = request.user
             user_tradeinfo.trade_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 现在
             user_tradeinfo.trade_amount = trade_amount
+            user_tradeinfo.message = "存款 " + trade_amount + " 元"
             user_tradeinfo.save()
 
-            user_message = UserMessage()
-            user_message.user = request.user.id
-            user_message.message = "存款 " + trade_amount + " 元"
-            user_message.save()
+            # user_message = UserMessage()
+            # user_message.user = request.user.id
+            # user_message.message = "存款 " + trade_amount + " 元"
+            # user_message.save()
 
             info = "存款成功， "
             return render(request, 'usercenter-account.html', {'info': info, 'card': card, 'has_card': True})
@@ -494,16 +528,26 @@ class AddcardView(LoginRequiredMixin, View):
 
 class CancellationView(LoginRequiredMixin, View):
     def get(self, request):
-        card = Card.objects.get(card_id=request.user.user.card_id)
+        card = Card.objects.get(card_id=request.user.card.card_id)
         if card:
             return render(request, 'usercenter-cancellation.html', {'is_activate': True, 'card': card, 'has_card': True})
         else:
             return render(request, 'usercenter-cancellation.html', {'is_activate': False, 'has_card': True})
 
     def post(self, request):
-        card = Card.objects.get(card_id=request.user.user.card_id)
-        card.delete()
-        return render(request, 'usercenter-delete-success.html', {'has_card': False})
+        card = Card.objects.get(card_id=request.user.card.card_id)
+        if card.balance > 0:
+            message = "将卡内余额全部取出，方可注销此卡。"
+            return render(request, 'usercenter-cancellation.html', {'message': message, 'card': card, 'has_card': True})
+        else:
+            card.delete()
+
+            user_message = UserMessage()
+            user_message.user = request.user.id
+            user_message.message = "成功注销了银行卡！"
+            user_message.save()
+
+            return render(request, 'usercenter-delete-success.html', {'has_card': False})
 
 
 def page_not_found(request):

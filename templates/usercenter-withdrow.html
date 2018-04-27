@@ -22,7 +22,7 @@
 				<form action="{% url 'users:withdraw' %}" class="perinform"  autocomplete="off" method="post" >
 					<ul class="right">
 						<li>银&nbsp;行&nbsp;卡&nbsp;号&nbsp;：
-                           <input type="text" name="cardid" readonly="readonly" id="cardid" value="{{ request.user.user.card_id }}" maxlength="11">
+                           <input type="text" name="cardid" readonly="readonly" id="cardid" value="{{ request.user.card.card_id }}" maxlength="11">
                             <i class="error-tips"></i>
                         </li>
                         <li>卡&nbsp;内&nbsp;余&nbsp;额&nbsp;：

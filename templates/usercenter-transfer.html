@@ -22,7 +22,7 @@
 				<form action="{% url 'users:transfer' %}" class="perinform"  autocomplete="off" method="post" onsubmit="return validate()">
 					<ul class="right">
 						<li>支&nbsp;付&nbsp;卡&nbsp;号&nbsp;：
-                           <input type="text" name="from_cardid" readonly="readonly" id="from_cardid" value="{{ request.user.user.card_id }}" maxlength="11">
+                           <input type="text" name="from_cardid" readonly="readonly" id="from_cardid" value="{{ request.user.card.card_id }}" maxlength="11">
                             <i class="error-tips"></i>
                         </li>
                         <li>卡&nbsp;内&nbsp;余&nbsp;额&nbsp;：
@@ -41,7 +41,6 @@
 
 						<li class="button heibtn">
                             <input type="submit"  value="保存"/>
-{#							<input type="button" id="jsEditUserBtn" value="保存">#}
 						</li>
 					</ul>
                     {% csrf_token %}
