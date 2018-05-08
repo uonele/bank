@@ -14,9 +14,9 @@ from django.core.urlresolvers import reverse
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 
-from .models import UserProfile, EmailVerifyRecord, UserMessage, Card,TradeInfo
+from .models import UserProfile, EmailVerifyRecord, UserMessage, Card, TradeInfo, Banner
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, UploadImageForm
-from .forms import UserInfoForm,TradeInfoForm
+from .forms import UserInfoForm, TradeInfoForm
 from utils.email_send import send_register_email
 from utils.mixin_utils import LoginRequiredMixin
 
@@ -398,8 +398,8 @@ class TransferView(LoginRequiredMixin, View):
                 # user_message_2.user = to_user.id
                 # user_message_2.message = "收到用户 " + from_username + " 转账 " + trade_amount + "元"
                 # user_message_2.save()
-
-                return render(request, 'usercenter-account.html', {'card' : card_out, 'has_card':True})
+                info = "转账成功，"
+                return render(request, 'usercenter-account.html', {'info':info, 'card' : card_out, 'has_card':True})
             else:
                 card = Card.objects.get(card_id=from_user.card.card_id)
                 return render(request, 'usercenter-transfer.html', {'message': message, 'card': card, 'has_card':True,
@@ -547,6 +547,16 @@ class CancellationView(LoginRequiredMixin, View):
             user_message.save()
 
             return render(request, 'usercenter-delete-success.html', {'has_card': False})
+
+
+class IndexView(View):
+    #首页
+    def get(self, request):
+        #取出轮播图
+        all_banners = Banner.objects.all().order_by('index')
+        return render(request, 'index.html', {
+            'all_banners':all_banners,
+        })
 
 
 def page_not_found(request):

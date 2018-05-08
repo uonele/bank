@@ -51,15 +51,15 @@
         <div class="login-box clearfix">
             <div class="hd-login clearfix">
                 <a class="index-logo" href="{% url 'index' %}"></a>
-                <h1>用户登录</h1>
-                <a class="index-font" href="{% url 'index' %}">回到首页</a>
+                <h1 style="">用户登录</h1>
+                <a class="index-font" style="font-size: 15px " href="{% url 'index' %}">回到首页</a>
             </div>
             <div class="fl slide">
                 <div class="imgslide">
                     <ul class="imgs">
-                            <li><a href=""><img width="483" height="472" src="/static/images/mysql.jpg" /></a></li>
-                            <li><a href=""><img width="483" height="472" src="/static/images/mysql.jpg" /></a></li>
-                            <li><a href=""><img width="483" height="472" src="/static/images/mysql.jpg" /></a></li>
+                            <li><a href=""><img width="483" height="472" src="/static/images/no1.jpg" /></a></li>
+                            <li><a href=""><img width="483" height="472" src="/static/images/no1.jpg" /></a></li>
+                            <li><a href=""><img width="483" height="472" src="/static/images/no1.jpg" /></a></li>
                     </ul>
                 </div>
                 <div class="unslider-arrow prev"></div>
@@ -71,7 +71,7 @@
                     <input type='hidden' name='csrfmiddlewaretoken' value='mymQDzHWl2REXIfPMg2mJaLqDfaS1sD5' />
                     <div class="form-group marb20 {% if login_form.errors.username %}errorput{% endif %}">
                         <label>邮&nbsp;&nbsp;&nbsp;&nbsp;箱</label>
-                        <input name="username" id="account_l" type="text" placeholder="请输入您的邮箱" />
+                        <input name="username" id="account_l" type="text" placeholder="请输入您的用户名/邮箱" />
                     </div>
                     <div class="form-group marb8 {% if login_form.errors.password %}errorput{% endif %}">
                         <label>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</label>

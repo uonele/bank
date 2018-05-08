@@ -2,7 +2,7 @@
 import xadmin
 from xadmin import views
 
-from .models import EmailVerifyRecord
+from .models import EmailVerifyRecord, Banner
 from .models import UserMessage, Card, TradeInfo
 
 
@@ -14,7 +14,7 @@ class UserMessageAdmin(object):
 
 class CardAdmin(object):
     list_display = ['card_id', 'user', 'balance']
-    search_fields = ['card_id', 'user', 'balance']
+   # search_fields = ['card_id', 'user', 'balance']
     list_filter = ['card_id', 'user', 'balance']
 
 
@@ -49,6 +49,7 @@ class BannerAdmin(object):
 
 xadmin.site.register(TradeInfo, TradeInfoAdmin)
 xadmin.site.register(Card, CardAdmin)
+#xadmin.site.register(Banner, BannerAdmin)
 xadmin.site.register(EmailVerifyRecord, EmailVerifyRecordAdmin)
 xadmin.site.register(views.BaseAdminView, BaseSetting)
 xadmin.site.register(UserMessage, UserMessageAdmin)
