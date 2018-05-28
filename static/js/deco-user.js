@@ -145,6 +145,54 @@ $(function(){
         ]
     );
     //保存个人资料
+    //     $('#jsEditUserBtn').on('click', function(){
+    //     var _self = $(this),
+    //         $jsEditUserForm = $('#jsEditUserForm')
+    //         verify = verifySubmit(
+    //         [
+    //             {id: '#nick_name', tips: Dml.Msg.epNickName, require: true}
+    //         ]
+    //     );
+    //     if(!verify){
+    //        return;
+    //     }
+    //     $.ajax({
+    //         cache: false,
+    //         type: 'post',
+    //         dataType:'json',
+    //         url:"/users/info/",
+    //         data:$jsEditUserForm.serialize(),
+    //         async: true,
+    //         beforeSend:function(XMLHttpRequest){
+    //             _self.val("保存中...");
+    //             _self.attr('disabled',true);
+    //         },
+    //         success: function(data) {
+    //             if(data.nick_name){
+    //                 _showValidateError($('#nick_name'), data.nick_name);
+    //             }else if(data.birday){
+    //                _showValidateError($('#birth_day'), data.birday);
+    //             }else if(data.address){
+    //                _showValidateError($('#address'), data.address);
+    //             }else if(data.status == "failure"){
+    //                  Dml.fun.showTipsDialog({
+    //                     title: '保存失败',
+    //                     h2: data.msg
+    //                 });
+    //             }else if(data.status == "success"){
+    //                 Dml.fun.showTipsDialog({
+    //                     title: '保存成功',
+    //                     h2: '个人信息修改成功！'
+    //                 });
+    //                 setTimeout(function(){window.location.href = window.location.href;},1500);
+    //             }
+    //         },
+    //         complete: function(XMLHttpRequest){
+    //             _self.val("保存");
+    //             _self.removeAttr("disabled");
+    //         }
+    //     });
+    // });
     $('#jsEditUserBtn').on('click', function(){
         var _self = $(this),
             $jsEditUserForm = $('#jsEditUserForm')
@@ -174,6 +222,10 @@ $(function(){
                    _showValidateError($('#birth_day'), data.birday);
                 }else if(data.address){
                    _showValidateError($('#address'), data.address);
+                }else if (data.mobile){
+                    _showValidateError($('#mobile'), data.mobile);
+                }else if (data.id_card){
+                    _showValidateError($('#id_card'), data.id_card);
                 }else if(data.status == "failure"){
                      Dml.fun.showTipsDialog({
                         title: '保存失败',

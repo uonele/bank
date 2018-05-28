@@ -68,7 +68,7 @@ class RegisterView(View):
             #写入欢迎注册消息
             user_message = UserMessage()
             user_message.user = user_profile.id
-            user_message.message = "欢迎注册慕学在线网"
+            user_message.message = "欢迎注册网上银行系统"
             user_message.save()
             send_register_email(user_name, "register")
             return render(request, "login.html")
@@ -167,6 +167,7 @@ class UserinfoView(LoginRequiredMixin, View):
     """
     def get(self, request):
         user_temp = request.user
+
         if hasattr(user_temp, 'card'):  # 判断是否有卡，有的话，则UserProfile的对象就会有user这个属性
             return render(request, 'usercenter-info.html', {'has_card': True})
         else:
@@ -176,6 +177,7 @@ class UserinfoView(LoginRequiredMixin, View):
         user_info_form = UserInfoForm(request.POST, instance=request.user)
         if user_info_form.is_valid():
             user_info_form.save()
+
             return HttpResponse('{"status":"success"}', content_type='application/json')
         else:
             return HttpResponse(json.dumps(user_info_form.errors), content_type='application/json')
@@ -431,7 +433,7 @@ class WithdrowView(LoginRequiredMixin,View):
         pattern = re.compile(r'^([1-9]\d{0,9}|0)([.]?|(\.\d{1,2})?)$')
         match = pattern.match(trade_amount.encode("utf-8"))
         if match:
-            if float(trade_amount.encode("utf-8")) < float(balance.encode("utf-8")):
+            if float(trade_amount.encode("utf-8")) <= float(balance.encode("utf-8")):
 
                 card.balance -= float(trade_amount.encode("utf-8"))
                 card.save()

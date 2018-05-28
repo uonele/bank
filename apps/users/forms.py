@@ -26,6 +26,15 @@ class ModifyPwdForm(forms.Form):
     password2 = forms.CharField(required=True, min_length=5)
 
 
+# class UserInfoForm(forms.Form):
+#     nick_name = forms.CharField(min_length=5, max_length=50)
+#     gender = forms.CharField()
+#     birday = forms.DateField()
+#     address = forms.CharField()
+#     mobile = forms.CharField(min_length=11,max_length=11)
+#     id_card = forms.CharField(min_length=18,max_length=18)
+
+
 class TradeInfoForm(forms.ModelForm):
     class Meta:
         model = TradeInfo
@@ -42,4 +51,4 @@ class UploadImageForm(forms.ModelForm):
 class UserInfoForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['nick_name', 'gender', 'birday', 'address', 'mobile']
+        fields = ['nick_name', 'gender', 'birday', 'address', 'mobile','id_card']
