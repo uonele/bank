@@ -34,7 +34,7 @@
                         {% if request.user.is_authenticated %}
                         <div class="personal">
                             <dl class="user fr">
-                                <dd>{{ user.username }}<img class="down fr" src="{% static "images/top_down.png" %}"/></dd>
+                                <dd>{{ user.email }}</dd>
                                 <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ request.user.image }}"/></dt>
                             </dl>
                             <div class="userdetail">
@@ -42,7 +42,7 @@
 	                                <dt><img width="80" height="80" src="{{ MEDIA_URL }}{{ request.user.image }}"/></dt>
 	                                <dd>
 	                                    <h2>{{ request.user.nick_name }}</h2>
-	                                    <p>{{ request.user.username }}</p>
+	                                    <p>{{ request.user.email }}</p>
 	                                </dd>
                                 </dl>
                                 <div class="btn">

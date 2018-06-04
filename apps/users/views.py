@@ -350,6 +350,7 @@ class TransferView(LoginRequiredMixin, View):
         from_user = request.user
         message = ""
 
+        from_username = from_user.email
         from_cardid = request.POST.get("from_cardid")  # 需要校验
         to_cardid = request.POST.get("to_cardid")       # 需要校验
         trade_amount = request.POST.get("trade_amount") # 需要校验
@@ -391,15 +392,15 @@ class TransferView(LoginRequiredMixin, View):
                 cards_in[0].balance += float(trade_amount.encode("utf-8"))
                 cards_in[0].save()
 
-                # user_message_1 = UserMessage()
-                # user_message_1.user = request.user.id
-                # user_message_1.message = "向用户 " + to_username + " 转账 "+  trade_amount+"元"
-                # user_message_1.save()
-                #
-                # user_message_2 = UserMessage()
-                # user_message_2.user = to_user.id
-                # user_message_2.message = "收到用户 " + from_username + " 转账 " + trade_amount + "元"
-                # user_message_2.save()
+                user_message_1 = UserMessage()
+                user_message_1.user = request.user.id
+                user_message_1.message = "向用户 " + to_username + " 转账 "+  trade_amount+"元"
+                user_message_1.save()
+
+                user_message_2 = UserMessage()
+                user_message_2.user = to_user.id
+                user_message_2.message = "收到用户 " + from_username + " 转账 " + trade_amount + "元"
+                user_message_2.save()
                 info = "转账成功，"
                 return render(request, 'usercenter-account.html', {'info':info, 'card' : card_out, 'has_card':True})
             else:
@@ -446,10 +447,10 @@ class WithdrowView(LoginRequiredMixin,View):
                 user_tradeinfo.message = "取款 " + trade_amount + "元"
                 user_tradeinfo.save()
 
-                # user_message = UserMessage()
-                # user_message.user = request.user.id
-                # user_message.message = "取款 " + trade_amount + "元"
-                # user_message.save()
+                user_message = UserMessage()
+                user_message.user = request.user.id
+                user_message.message = "取款 " + trade_amount + "元"
+                user_message.save()
                 info = "取款成功， "
                 return render(request, 'usercenter-account.html', {'info':info ,'card': card, 'has_card': True})
             else:
@@ -492,10 +493,10 @@ class DepositeView(LoginRequiredMixin, View):
             user_tradeinfo.message = "存款 " + trade_amount + " 元"
             user_tradeinfo.save()
 
-            # user_message = UserMessage()
-            # user_message.user = request.user.id
-            # user_message.message = "存款 " + trade_amount + " 元"
-            # user_message.save()
+            user_message = UserMessage()
+            user_message.user = request.user.id
+            user_message.message = "存款 " + trade_amount + " 元"
+            user_message.save()
 
             info = "存款成功， "
             return render(request, 'usercenter-account.html', {'info': info, 'card': card, 'has_card': True})

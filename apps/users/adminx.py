@@ -20,12 +20,12 @@ class CardAdmin(object):
 
 class TradeInfoAdmin(object):
     list_display = ['trade_id', 'trade_type', 'trade_amount', 'from_user', 'to_user', 'trade_time']
-    search_fields = ['trade_id', 'trade_type', 'trade_amount', 'from_user', 'to_user', 'trade_time']
+    #search_fields = ['trade_id', 'trade_type', 'trade_amount', 'from_user', 'to_user', 'trade_time']
     list_filter = ['trade_id', 'trade_type', 'trade_amount', 'from_user', 'to_user', 'trade_time']
 
 
 class BaseSetting(object):
-    enable_themes = True
+    enable_themes = False
     use_bootswatch = True
 
 
@@ -37,12 +37,13 @@ class GlobalSetting(object):
 
 class EmailVerifyRecordAdmin(object):
     list_display = ['code', 'email', 'send_type', 'send_time']
-    search_fields = ['code', 'email', 'send_type', 'send_time']
+    #search_fields = ['code', 'email', 'send_type', 'send_time']
     list_filter = ['code', 'email', 'send_type', 'send_time']
 
 
 class BannerAdmin(object):
     list_display = ['title', 'image', 'url', 'index', 'add_time']
+
     search_fields = ['title', 'image', 'url', 'index']
     list_filter = ['title', 'image', 'url', 'index', 'add_time']
 
